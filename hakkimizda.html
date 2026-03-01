@@ -165,9 +165,15 @@
         font-size: 0.82rem; color: rgba(255,255,255,0.88);
         line-height: 1.7; font-family: 'DM Sans', sans-serif;
       }
+      @media (max-width:640px) {
+        .deger-grid-3col { grid-template-columns:1fr 1fr !important; }
+      }
+      @media (max-width:420px) {
+        .deger-grid-3col { grid-template-columns:1fr !important; }
+      }
     </style>
 
-    <div style="max-width:960px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:24px">
+    <div class="deger-grid-3col" style="max-width:960px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:24px">
 
       <div class="deger-card">
         <img src="foto1.png" alt="Doğruluk">

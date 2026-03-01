@@ -549,40 +549,233 @@ section { padding:110px 0; }
 .galeri-empty p { font-size:.9rem; }
 
 /* ===== RESPONSIVE ===== */
-@media (max-width:1100px) {
-  .hero-wrapper { grid-template-columns:1fr; }
-  .hero-left { padding:110px 40px 72px; }
-  .hero-right { min-height:400px; }
+
+/* ── 1200px: Geniş tablet / küçük laptop ── */
+@media (max-width:1200px) {
+  .container { padding:0 32px; }
+  .nav-inner { padding:0 32px; }
+  .hero-left { padding:80px 48px 80px 56px; }
+  .hero-right { padding:40px; }
   .features-grid { grid-template-columns:repeat(2,1fr); }
-  .news-grid { grid-template-columns:1fr; }
+}
+
+/* ── 1024px: Tablet landscape ── */
+@media (max-width:1024px) {
+  .hero-wrapper { grid-template-columns:1fr; min-height:auto; }
+  .hero-left {
+    padding:110px 40px 64px;
+    text-align:center; align-items:center;
+  }
+  .hero-desc { max-width:600px; }
+  .hero-line { margin:0 auto 28px; }
+  .hero-stats { justify-content:center; gap:36px; }
+  .hero-actions { justify-content:center; }
+  .hero-right { min-height:420px; padding:40px; justify-content:center; align-items:center; flex-direction:column; }
+  .hero-card { width:100%; max-width:480px; }
+
+  .about-grid { gap:56px; }
   .haberler-grid { grid-template-columns:repeat(2,1fr); }
+  .news-grid { grid-template-columns:1fr; }
   .galeri-masonry { columns:2; }
+  .iletisim-grid { gap:36px; }
 }
+
+/* ── 900px: Tablet portrait ── */
 @media (max-width:900px) {
-  .about-grid,.iletisim-grid { grid-template-columns:1fr; }
-  .about-img-box { height:300px; }
+  .about-grid { grid-template-columns:1fr; }
+  .about-img-box { height:280px; }
+  .iletisim-grid { grid-template-columns:1fr; }
   .footer-grid { grid-template-columns:1fr 1fr; gap:40px; }
+  .section-header.row { flex-direction:column; align-items:flex-start; gap:20px; }
+  h1 { font-size:clamp(2.6rem,6vw,4.5rem); }
+  h2 { font-size:clamp(2rem,4vw,3rem); }
 }
+
+/* ── 768px: Mobil büyük ── */
 @media (max-width:768px) {
-  .nav-links { display:none; flex-direction:column; position:absolute; top:76px; left:0; right:0; background:rgba(253,246,238,.98); padding:16px; border-bottom:1px solid var(--g200); gap:4px; box-shadow:var(--shadow); backdrop-filter:blur(20px); }
-  .nav-links.open { display:flex; }
-  .nav-links li a { display:block; padding:10px 16px; }
+  /* Navbar */
+  .nav-links {
+    display:none; flex-direction:column;
+    position:absolute; top:76px; left:0; right:0;
+    background:rgba(253,246,238,.98);
+    padding:12px 16px 20px;
+    border-bottom:2px solid var(--g200);
+    gap:2px;
+    box-shadow:0 16px 40px rgba(74,15,15,.15);
+    backdrop-filter:blur(24px);
+    z-index:999;
+  }
+  .nav-links.open { display:flex; animation:fadeUp .2s ease forwards; }
+  .nav-links li a {
+    display:block; padding:12px 16px;
+    border-radius:var(--r8);
+    font-size:0.82rem;
+  }
   .nav-links li a::after { display:none; }
+  .nav-links li a:hover { background:var(--g100); }
+  .nav-cta {
+    background:var(--bordo) !important;
+    margin-top:8px; text-align:center;
+    border-radius:var(--r8) !important;
+  }
   .hamburger { display:flex; }
-  .hero-stats { gap:28px; }
-  .form-row { grid-template-columns:1fr; }
-  .footer-grid { grid-template-columns:1fr; gap:32px; }
-  section { padding:72px 0; }
-  .haberler-grid { grid-template-columns:1fr; }
-  .features-grid { grid-template-columns:1fr; }
-  .hero-left { padding:110px 24px 56px; }
-  .contact-form { padding:28px; }
-  .etkinlik-card { flex-direction:column; gap:16px; }
+
+  /* Container & Section */
   .container { padding:0 20px; }
-  .galeri-masonry { columns:1; }
-  .galeri-hero-inner .container { flex-direction:column; gap:24px; }
+  .nav-inner { padding:0 20px; }
+  section { padding:64px 0; }
+
+  /* Hero */
+  .hero-left { padding:100px 20px 52px; text-align:center; align-items:center; }
+  .hero-title { font-size:clamp(2.4rem,8vw,3.8rem); }
+  .hero-desc { max-width:100%; }
+  .hero-line { margin:0 auto 24px; }
+  .hero-actions { flex-direction:column; width:100%; gap:12px; }
+  .hero-actions .btn { justify-content:center; width:100%; }
+  .hero-stats { gap:20px; flex-wrap:wrap; justify-content:center; padding-top:28px; margin-top:40px; }
+  .stat-num { font-size:2.2rem; }
+  .hero-right { padding:40px 20px; min-height:360px; }
+  .hero-card { padding:20px; margin-bottom:12px; }
+
+  /* Page Hero */
+  .page-hero { padding:110px 20px 60px; }
+  .page-hero h1 { font-size:clamp(2.2rem,7vw,3.5rem); }
+  .page-hero::after { left:20px; }
+
+  /* Features */
+  .features-grid { grid-template-columns:1fr; }
+  .feature-card { padding:32px 24px; }
+
+  /* News */
+  .news-grid { grid-template-columns:1fr; }
+  .news-small-list { gap:12px; }
+
+  /* Haberler */
+  .haberler-grid { grid-template-columns:1fr; }
+  .haber-img { height:180px; }
+
+  /* Footer */
+  .footer-grid { grid-template-columns:1fr; gap:32px; }
+  .footer { padding:60px 0 0; }
+
+  /* Forms */
+  .form-row { grid-template-columns:1fr; }
+  .contact-form { padding:24px 20px; }
+
+  /* İletişim */
+  .iletisim-grid { grid-template-columns:1fr; gap:28px; }
+
+  /* Kadro */
+  .kadro-grid { grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:14px; }
+  .kadro-avatar { height:130px; }
+
+  /* Etkinlik */
+  .etkinlik-card {
+    flex-direction:column; gap:16px; align-items:flex-start;
+    padding:20px;
+  }
+  .etkinlik-date { min-width:auto; display:flex; gap:8px; align-items:center; padding:10px 16px; }
+  .etkinlik-date .day { font-size:1.8rem; }
+
+  /* Galeri */
+  .galeri-masonry { columns:2; column-gap:12px; }
+  .galeri-item { margin-bottom:12px; }
+  .galeri-hero-inner { padding:56px 0 44px; }
+  .galeri-hero-inner .container { flex-direction:column; gap:20px; }
   .galeri-stats-bar { gap:24px; }
+  .galeri-filters { gap:8px; }
+  .filter-pill { padding:7px 14px; font-size:0.68rem; }
+
+  /* Lightbox */
+  .lb-nav { padding:8px 12px; font-size:1.6rem; }
+  .lb-prev { left:8px; }
+  .lb-next { right:8px; }
+
+  /* About */
+  .about-img-box { height:240px; }
+  .about-badge { bottom:20px; left:20px; padding:14px 18px; }
+  .about-badge .big-num { font-size:2rem; }
+
+  /* CTA */
+  .cta-band { padding:72px 0; }
+  .cta-band h2 { font-size:clamp(1.8rem,6vw,2.8rem); }
+
+  /* Modal */
+  .modal { padding:32px 24px; margin:20px; }
+
+  /* FAB */
+  .fab, .add-etkinlik-btn, .add-news-btn, .add-kadro-btn {
+    bottom:24px; right:20px; width:52px; height:52px;
+  }
+
+  /* Tabs */
+  .tabs { gap:4px; overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none; }
+  .tabs::-webkit-scrollbar { display:none; }
+  .tab-btn { padding:10px 14px; white-space:nowrap; font-size:0.7rem; }
+
+  /* Section header */
+  .section-header { margin-bottom:44px; }
+  h2 { font-size:clamp(1.8rem,6vw,2.8rem); }
+}
+
+/* ── 480px: Küçük telefon ── */
+@media (max-width:480px) {
+  .container { padding:0 16px; }
+  .nav-inner  { padding:0 16px; }
+
+  .hero-title { font-size:clamp(2rem,9vw,2.8rem); }
+  .hero-left  { padding:94px 16px 48px; }
+  .hero-right { padding:32px 16px; }
+  .hero-card  { padding:16px; }
+  .hero-badge { font-size:0.62rem; padding:6px 14px; }
+
+  .page-hero  { padding:100px 16px 52px; }
+
+  .galeri-masonry { columns:1; }
+  .galeri-item    { margin-bottom:10px; }
+
+  .etkinlik-meta { flex-wrap:wrap; gap:10px; }
+
+  .kadro-grid { grid-template-columns:repeat(2,1fr); }
+
+  .contact-form  { padding:20px 16px; }
+  .form-group input,
+  .form-group textarea,
+  .form-group select { font-size:16px; }
+
+  .footer-grid   { gap:28px; }
+  .footer        { padding:48px 0 0; }
+
+  .features-grid { gap:0; }
+  .feature-card  { padding:28px 20px; }
+
+  .haber-img     { height:160px; }
+  .news-body     { padding:20px; }
+  .news-small    { padding:18px 16px; }
+
+  .cta-band      { padding:60px 0; }
+
+  .modal         { padding:24px 16px; }
+  .section-header { margin-bottom:36px; }
+
   .lb-nav { display:none; }
+  .lightbox img { max-width:98vw; max-height:80vh; }
+
+  /* Hakkımızda değerler */
+  .deger-grid-3col { grid-template-columns:1fr !important; }
+}
+
+/* ── Dokunmatik: hover efektleri kaldır ── */
+@media (hover:none) {
+  .deger-card .deger-overlay { opacity:0; }
+  .deger-card:active .deger-overlay { opacity:1; transition:opacity .15s; }
+  .galeri-item:hover .galeri-del { display:none; }
+  .hero-card:hover { background:rgba(255,255,255,0.065); }
+  .news-card:hover,
+  .haber-card:hover,
+  .kadro-card:hover,
+  .etkinlik-card:hover { transform:none; }
+  .news-small:hover { transform:none; }
 }
 
 /* ===== LUCIDE ICONS ===== */
