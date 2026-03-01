@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Galeri | Pozitif Bilgi Koleji</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="https://unpkg.com/lucide@0.292.0/dist/umd/lucide.min.js"></script>
+</head>
+<body>
+
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="logo">
+      <img src="logo.png" alt="Pozitif Bilgi Koleji" class="logo-img">
+    </a>
+    <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Ana Sayfa</a></li>
+      <li><a href="hakkimizda.html">Hakkımızda</a></li>
+      <li><a href="kadromuz.html">Kadromuz</a></li>
+      <li><a href="haberler.html">Haberler</a></li>
+      <li><a href="galeri.html" class="active">Galeri</a></li>
+      <li><a href="etkinlikler.html">Etkinlikler</a></li>
+      <li><a href="iletisim.html" class="nav-cta">İletişim</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="galeri-hero-section">
+  <div class="galeri-hero-inner">
+    <div class="container">
+      <div class="galeri-hero-text">
+        <span class="tag">Fotoğraflar</span>
+        <h1>Okulumuzdan<br><em>Anlar</em></h1>
+        <p>Etkinlikler, ders anları, spor ve özel günlerden seçme kareler.</p>
+      </div>
+      <div class="galeri-stats-bar">
+        <div class="galeri-stat">
+          <span class="num" id="statTotal">—</span>
+          <span class="lbl">Fotoğraf</span>
+        </div>
+        <div class="galeri-stat">
+          <span class="num">5</span>
+          <span class="lbl">Kategori</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<section style="padding:56px 0 100px">
+  <div class="container">
+    <div class="galeri-filters" id="galeriFilters">
+      <button class="filter-pill active" data-cat="tümü">Tümü</button>
+      <button class="filter-pill" data-cat="etkinlik">Etkinlikler</button>
+      <button class="filter-pill" data-cat="ders">Dersler</button>
+      <button class="filter-pill" data-cat="spor">Spor</button>
+      <button class="filter-pill" data-cat="mezuniyet">Mezuniyet</button>
+      <button class="filter-pill" data-cat="diger">Diğer</button>
+    </div>
+
+    <div class="galeri-masonry" id="galeriGrid">
+      <div class="galeri-skeleton"><div class="skeleton-block" style="height:260px;border-radius:12px"></div></div>
+      <div class="galeri-skeleton"><div class="skeleton-block" style="height:200px;border-radius:12px"></div></div>
+      <div class="galeri-skeleton"><div class="skeleton-block" style="height:320px;border-radius:12px"></div></div>
+      <div class="galeri-skeleton"><div class="skeleton-block" style="height:240px;border-radius:12px"></div></div>
+      <div class="galeri-skeleton"><div class="skeleton-block" style="height:280px;border-radius:12px"></div></div>
+      <div class="galeri-skeleton"><div class="skeleton-block" style="height:200px;border-radius:12px"></div></div>
+    </div>
+
+    <div id="galeriEmpty" style="display:none;text-align:center;padding:100px 20px;color:var(--g400)">
+      <div style="font-size:3.5rem;margin-bottom:20px;opacity:.5">🖼️</div>
+      <h3 style="font-size:1.5rem;margin-bottom:10px;color:var(--bordo-dark)">Henüz fotoğraf yok</h3>
+      <p style="font-size:.9rem">Yakında fotoğraflar burada görünecek.</p>
+    </div>
+  </div>
+</section>
+
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" id="lbClose">✕</button>
+  <button class="lb-nav lb-prev" id="lbPrev">‹</button>
+  <img id="lbImg" src="" alt="">
+  <button class="lb-nav lb-next" id="lbNext">›</button>
+  <div class="lb-counter" id="lbCounter"></div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a href="index.html" class="logo">
+          <img src="logo.png" alt="Pozitif Bilgi Koleji" class="logo-img footer-logo-img">
+        </a>
+        <p class="footer-desc">Maser Eğitim kurumuna ait Pozitif Bilgi Koleji.</p>
+      </div>
+      <div>
+        <h4>Sayfalar</h4>
+        <ul>
+          <li><a href="hakkimizda.html">Hakkımızda</a></li>
+          <li><a href="kadromuz.html">Kadromuz</a></li>
+          <li><a href="haberler.html">Haberler</a></li>
+          <li><a href="galeri.html">Galeri</a></li>
+          <li><a href="etkinlikler.html">Etkinlikler</a></li>
+          <li><a href="iletisim.html">İletişim</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>İletişim</h4>
+        <div class="footer-contact">
+          <p><i data-lucide="map-pin"></i> Menteş Mh. Ali Kaya Mutlu Cad. 71/A Yenişehir / Mersin</p>
+          <p><i data-lucide="phone"></i> <a href="tel:+905551925153">+90 555 192 5153</a></p>
+          <p><i data-lucide="mail"></i> <a href="/cdn-cgi/l/email-protection#acdcc3d6c5d8c5cacec5c0cbc5c7c3c0c9c6c59d94eccbc1cdc5c082cfc3c1"><span class="__cf_email__" data-cfemail="c1b1aebba8b5a8a7a3a8ada6a8aaaeada4aba8f0f981a6aca0a8adefa2aeac">[email&#160;protected]</span></a></p>
+          <p><i data-lucide="instagram"></i> <a href="https://www.instagram.com/pozitifbilgikoleji/" target="_blank">@pozitifbilgikoleji</a></p>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 Pozitif Bilgi Koleji, Maser Eğitim kurumuna aittir.</p>
+    </div>
+  </div>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="module">
+import { initializeApp }
+  from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import {
+  getFirestore, collection, deleteDoc, doc,
+  query, orderBy, onSnapshot
+} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+/* ── Firebase Config ── */
+const firebaseConfig = {
+  apiKey:            "AIzaSyBQsrZLTj4_TULmPbglm8HdKMsy0WyfsqA",
+  authDomain:        "pbkoleji.firebaseapp.com",
+  projectId:         "pbkoleji",
+  storageBucket:     "pbkoleji.firebasestorage.app",
+  messagingSenderId: "438741962860",
+  appId:             "1:438741962860:web:be6f0d747df17c83c08849"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+const COLL = 'galeri';
+let allPhotos    = [];
+let filtered     = [];
+let activeFilter = 'tümü';
+let lbIndex      = 0;
+
+const grid      = document.getElementById('galeriGrid');
+const emptyBox  = document.getElementById('galeriEmpty');
+const statTotal = document.getElementById('statTotal');
+const lightbox  = document.getElementById('lightbox');
+const lbImg     = document.getElementById('lbImg');
+const lbCounter = document.getElementById('lbCounter');
+
+/* ── Realtime listener ── */
+const q = query(collection(db, COLL), orderBy('createdAt','desc'));
+onSnapshot(q, snap => {
+  allPhotos = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+  statTotal.textContent = allPhotos.length;
+  applyFilter();
+}, err => {
+  console.error('Firestore hatası:', err);
+  grid.querySelectorAll('.galeri-skeleton').forEach(s => s.remove());
+  grid.innerHTML = `<div style="text-align:center;padding:60px;color:var(--g400)">
+    <p>Bağlantı hatası. Konsolu kontrol edin.</p></div>`;
+});
+
+/* ── Filter ── */
+document.getElementById('galeriFilters').querySelectorAll('.filter-pill').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeFilter = btn.dataset.cat;
+    applyFilter();
+  });
+});
+
+function applyFilter() {
+  filtered = activeFilter === 'tümü'
+    ? allPhotos
+    : allPhotos.filter(p => p.cat === activeFilter);
+  renderGrid();
+}
+
+const catLabels = { etkinlik:'Etkinlik', ders:'Ders', spor:'Spor', mezuniyet:'Mezuniyet', diger:'Diğer' };
+
+/* ── Render ── */
+function renderGrid() {
+  grid.querySelectorAll('.galeri-skeleton').forEach(s => s.remove());
+
+  if (filtered.length === 0) {
+    grid.innerHTML = '';
+    emptyBox.style.display = 'block';
+    return;
+  }
+  emptyBox.style.display = 'none';
+
+  grid.innerHTML = filtered.map((p,i) => `
+    <div class="galeri-item" data-index="${i}" style="transition-delay:${Math.min(i,9)*0.06}s">
+      <img src="${p.url}" alt="${p.caption||''}" loading="lazy">
+      <div class="galeri-overlay">
+        <div class="galeri-overlay-zoom">⤢</div>
+        <div class="galeri-overlay-meta">
+          <span class="galeri-overlay-cat">${catLabels[p.cat]||p.cat}</span>
+          ${p.caption?`<span class="galeri-overlay-caption">${p.caption}</span>`:''}
+        </div>
+      </div>
+      <button class="galeri-del" data-id="${p.id}" title="Sil">🗑</button>
+    </div>`
+  ).join('');
+
+  grid.querySelectorAll('.galeri-item').forEach(item => {
+    item.addEventListener('click', e => {
+      if (e.target.closest('.galeri-del')) return;
+      lbIndex = parseInt(item.dataset.index);
+      openLb();
+    });
+  });
+
+  grid.querySelectorAll('.galeri-del').forEach(btn => {
+    btn.addEventListener('click', async e => {
+      e.stopPropagation();
+      if (!confirm('Bu fotoğrafı silmek istediğinizden emin misiniz?')) return;
+      try {
+        await deleteDoc(doc(db, COLL, btn.dataset.id));
+      } catch(err) { alert('Silme başarısız: ' + err.message); }
+    });
+  });
+
+  requestAnimationFrame(() => {
+    grid.querySelectorAll('.fade-in').forEach(el => setTimeout(()=>el.classList.add('visible'), 50));
+  });
+}
+
+/* ── Lightbox ── */
+function openLb() {
+  const p = filtered[lbIndex];
+  lbImg.src = p.url;
+  lbCounter.textContent = `${lbIndex+1} / ${filtered.length}`;
+  lightbox.classList.add('open');
+}
+function closeLb() { lightbox.classList.remove('open'); lbImg.src=''; }
+
+document.getElementById('lbClose').onclick = closeLb;
+lightbox.addEventListener('click', e => { if(e.target===lightbox) closeLb(); });
+document.getElementById('lbPrev').onclick = () => { lbIndex=(lbIndex-1+filtered.length)%filtered.length; openLb(); };
+document.getElementById('lbNext').onclick = () => { lbIndex=(lbIndex+1)%filtered.length; openLb(); };
+document.addEventListener('keydown', e => {
+  if (!lightbox.classList.contains('open')) return;
+  if (e.key === 'ArrowLeft') { lbIndex=(lbIndex-1+filtered.length)%filtered.length; openLb(); }
+  if (e.key === 'ArrowRight') { lbIndex=(lbIndex+1)%filtered.length; openLb(); }
+  if (e.key === 'Escape') closeLb();
+});
+</script>
+<script src="pbk-settings.js"></script>
+</body>
+</html>
