@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel | Pozitif Bilgi Koleji</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bordo:#7b1c1c;--bordo-dk:#4a0f0f;--bordo-mid:#922222;
+  --turuncu:#e8820c;--altin:#f0c040;
+  --cream:#fdf6ee;--cream-dk:#f5ede0;
+  --ink:#1a0a05;--g100:#f7f0ea;--g200:#e8d5c4;--g300:#c9a88a;--g400:#9a6e55;
+  --green:#059669;--red:#dc2626;--blue:#1d4ed8;--purple:#7c3aed;
+  --sidebar:240px;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--cream-dk);color:var(--ink);min-height:100vh;display:flex;flex-direction:column}
+a{text-decoration:none;color:inherit}
+img{max-width:100%;display:block}
+
+/* ── LOGIN ── */
+#loginScreen{position:fixed;inset:0;background:var(--bordo-dk);display:flex;align-items:center;justify-content:center;z-index:9999}
+.login-box{background:white;border-radius:16px;padding:48px 40px;width:100%;max-width:380px;box-shadow:0 24px 64px rgba(0,0,0,.4);text-align:center}
+.login-logo{font-family:'Cormorant Garamond',serif;font-size:2rem;color:var(--bordo-dk);font-weight:700;margin-bottom:6px}
+.login-logo span{color:var(--turuncu)}
+.login-sub{font-size:.8rem;color:var(--g400);margin-bottom:32px;letter-spacing:.06em;text-transform:uppercase}
+.login-inp{width:100%;padding:13px 16px;border:1.5px solid var(--g200);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.95rem;background:var(--cream);outline:none;transition:.2s;margin-bottom:14px}
+.login-inp:focus{border-color:var(--bordo);background:white}
+.login-btn{width:100%;padding:13px;background:var(--bordo);color:white;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:.2s}
+.login-btn:hover{background:var(--bordo-mid)}
+.login-err{color:var(--red);font-size:.8rem;margin-top:10px;display:none}
+
+/* ── SHELL ── */
+#shell{display:none;min-height:100vh}
+.topbar{position:fixed;top:0;left:0;right:0;height:60px;background:var(--bordo-dk);display:flex;align-items:center;justify-content:space-between;padding:0 24px 0 calc(var(--sidebar)+24px);z-index:100}
+.topbar-title{font-family:'Cormorant Garamond',serif;font-size:1.15rem;color:white;font-weight:600}
+.topbar-title span{color:var(--altin)}
+.topbar-right{display:flex;align-items:center;gap:16px}
+.topbar-site{font-size:.72rem;color:rgba(255,255,255,.55);letter-spacing:.08em;text-transform:uppercase;font-weight:600;transition:.2s}
+.topbar-site:hover{color:white}
+.topbar-logout{font-size:.72rem;color:rgba(255,255,255,.4);letter-spacing:.08em;text-transform:uppercase;font-weight:600;cursor:pointer;transition:.2s}
+.topbar-logout:hover{color:var(--altin)}
+
+/* ── SIDEBAR ── */
+.sidebar{position:fixed;top:0;left:0;bottom:0;width:var(--sidebar);background:var(--bordo-dk);padding-top:60px;overflow-y:auto;z-index:99;border-right:1px solid rgba(255,255,255,.06)}
+.sidebar-section{padding:20px 16px 8px;font-size:.6rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.25)}
+.nav-item{display:flex;align-items:center;gap:12px;padding:11px 20px;font-size:.82rem;font-weight:500;color:rgba(255,255,255,.6);cursor:pointer;transition:.2s;border-left:3px solid transparent;margin:1px 0}
+.nav-item:hover{background:rgba(255,255,255,.06);color:white}
+.nav-item.active{background:rgba(240,192,64,.1);color:var(--altin);border-left-color:var(--altin)}
+.nav-item .icon{font-size:1rem;width:20px;text-align:center;flex-shrink:0}
+.sidebar-divider{height:1px;background:rgba(255,255,255,.06);margin:8px 16px}
+
+/* ── MAIN ── */
+.main{margin-left:var(--sidebar);padding-top:60px;min-height:100vh}
+.page-content{padding:40px;max-width:1100px}
+.page-content.hidden{display:none}
+
+/* ── PAGE HEADER ── */
+.ph{margin-bottom:32px}
+.ph h1{font-family:'Cormorant Garamond',serif;font-size:2.2rem;color:var(--bordo-dk);margin-bottom:4px}
+.ph p{font-size:.85rem;color:var(--g400)}
+
+/* ── STATS ── */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:32px}
+.stat-card{background:white;border-radius:12px;padding:24px 20px;border:1px solid var(--g200);display:flex;align-items:center;gap:16px}
+.stat-icon{width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0}
+.stat-icon.red{background:rgba(123,28,28,.08)}
+.stat-icon.orange{background:rgba(232,130,12,.08)}
+.stat-icon.green{background:rgba(5,150,105,.08)}
+.stat-icon.blue{background:rgba(29,78,216,.08)}
+.stat-num{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:700;color:var(--bordo);line-height:1;display:block}
+.stat-lbl{font-size:.68rem;color:var(--g400);font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-top:2px;display:block}
+
+/* ── CARDS ── */
+.card{background:white;border-radius:12px;border:1px solid var(--g200);margin-bottom:24px;overflow:hidden}
+.card-head{padding:20px 24px;border-bottom:1px solid var(--g200);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.card-head h3{font-family:'Cormorant Garamond',serif;font-size:1.3rem;color:var(--bordo-dk);display:flex;align-items:center;gap:8px}
+.card-body{padding:24px}
+
+/* ── FORMS ── */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-grid.col1{grid-template-columns:1fr}
+.fg{display:flex;flex-direction:column;gap:5px}
+.fg.full{grid-column:1/-1}
+.fg label{font-size:.63rem;font-weight:700;color:var(--g400);letter-spacing:.1em;text-transform:uppercase}
+.fg input,.fg select,.fg textarea{padding:10px 13px;border:1.5px solid var(--g200);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.88rem;color:var(--ink);background:var(--cream);outline:none;transition:.2s}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--bordo);background:white}
+.fg textarea{resize:vertical;min-height:90px}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:10px 20px;border-radius:7px;font-family:'DM Sans',sans-serif;font-size:.76rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;border:none;transition:.2s}
+.btn-primary{background:var(--bordo);color:white}
+.btn-primary:hover{background:var(--bordo-mid);transform:translateY(-1px)}
+.btn-secondary{background:var(--cream-dk);color:var(--ink);border:1.5px solid var(--g200)}
+.btn-secondary:hover{border-color:var(--bordo);color:var(--bordo)}
+.btn-danger{background:rgba(220,38,38,.08);color:var(--red);border:1.5px solid rgba(220,38,38,.2)}
+.btn-danger:hover{background:var(--red);color:white}
+.btn-success{background:var(--green);color:white}
+.btn-success:hover{background:#047857}
+.btn-sm{padding:6px 13px;font-size:.7rem}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
+
+/* ── TABLE ── */
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g400);padding:10px 14px;text-align:left;border-bottom:2px solid var(--g200);background:var(--g100)}
+.tbl td{padding:12px 14px;border-bottom:1px solid var(--g100);font-size:.875rem;vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:var(--g100)}
+.tbl-thumb{width:48px;height:48px;border-radius:6px;object-fit:cover;background:var(--g200)}
+.badge{display:inline-block;font-size:.6rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:50px}
+.badge-red{background:rgba(123,28,28,.1);color:var(--bordo)}
+.badge-orange{background:rgba(232,130,12,.1);color:var(--turuncu)}
+.badge-green{background:rgba(5,150,105,.1);color:var(--green)}
+.badge-blue{background:rgba(29,78,216,.1);color:var(--blue)}
+.badge-purple{background:rgba(124,58,237,.1);color:var(--purple)}
+.badge-gray{background:var(--g200);color:var(--g400)}
+
+/* ── DROP ZONE ── */
+.drop-zone{border:2px dashed var(--g200);border-radius:10px;padding:40px;text-align:center;cursor:pointer;transition:.25s;background:var(--cream);position:relative}
+.drop-zone:hover,.drop-zone.drag{border-color:var(--bordo);background:#fdf0e8}
+.drop-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.drop-icon{font-size:2.2rem;margin-bottom:10px}
+.drop-text{font-size:.9rem;color:var(--g400);margin-bottom:4px}
+.drop-hint{font-size:.75rem;color:var(--g300)}
+.preview-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:10px;margin-top:16px}
+.preview-item{position:relative;border-radius:7px;overflow:hidden;aspect-ratio:1;background:var(--g200)}
+.preview-item img{width:100%;height:100%;object-fit:cover}
+.preview-remove{position:absolute;top:4px;right:4px;background:rgba(220,38,38,.9);color:white;border:none;border-radius:4px;width:20px;height:20px;font-size:.65rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.preview-status{position:absolute;inset:0;background:rgba(74,15,15,.6);display:none;align-items:center;justify-content:center;color:white;font-size:1.1rem}
+.preview-status.show{display:flex}
+
+/* ── PROGRESS ── */
+.prog-wrap{display:none;margin-top:14px}
+.prog-bg{height:4px;background:var(--g200);border-radius:10px;overflow:hidden}
+.prog-bar{height:100%;background:var(--turuncu);border-radius:10px;transition:width .3s;width:0}
+.prog-txt{font-size:.78rem;color:var(--g400);margin-top:6px;text-align:center}
+
+/* ── TOGGLE ── */
+.toggle-wrap{display:flex;align-items:center;gap:12px}
+.toggle{position:relative;width:44px;height:24px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;inset:0;background:var(--g300);border-radius:50px;cursor:pointer;transition:.3s}
+.toggle-slider::before{content:'';position:absolute;width:18px;height:18px;left:3px;top:3px;background:white;border-radius:50%;transition:.3s}
+.toggle input:checked + .toggle-slider{background:var(--green)}
+.toggle input:checked + .toggle-slider::before{transform:translateX(20px)}
+.toggle-label{font-size:.85rem;color:var(--ink);font-weight:500}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--green);color:white;padding:11px 26px;border-radius:8px;font-size:.85rem;font-weight:600;z-index:9999;transition:transform .35s cubic-bezier(.4,0,.2,1);box-shadow:0 8px 24px rgba(5,150,105,.3);white-space:nowrap}
+.toast.err{background:var(--red)}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+/* ── EMPTY ── */
+.empty{text-align:center;padding:48px 20px;color:var(--g300)}
+.empty .e-icon{font-size:2.5rem;margin-bottom:12px}
+.empty p{font-size:.88rem}
+
+/* ── MODAL ── */
+.modal-bg{position:fixed;inset:0;background:rgba(13,31,60,.55);z-index:500;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-bg.open{display:flex}
+.modal{background:white;border-radius:14px;padding:36px;max-width:520px;width:100%;max-height:90vh;overflow-y:auto;position:relative}
+.modal h3{font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--bordo-dk);margin-bottom:24px}
+.modal-close{position:absolute;top:16px;right:16px;background:none;border:none;font-size:1.1rem;cursor:pointer;color:var(--g400);padding:6px}
+.modal-close:hover{color:var(--ink)}
+.modal-foot{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
+
+@media(max-width:900px){
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .form-grid{grid-template-columns:1fr}
+}
+@media(max-width:640px){
+  :root{--sidebar:0px}
+  .topbar{padding-left:24px}
+  .page-content{padding:24px 16px}
+  .sidebar{transform:translateX(-240px);width:240px;transition:.3s}
+  .sidebar.open{transform:translateX(0)}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">PBK <span>Admin</span></div>
+    <div class="login-sub">Yönetim Paneli</div>
+    <input class="login-inp" type="text" id="loginUser" placeholder="Kullanıcı adı" autocomplete="off">
+    <input class="login-inp" type="password" id="loginPass" placeholder="Şifre">
+    <button class="login-btn" onclick="doLogin()">Giriş Yap</button>
+    <div class="login-err" id="loginErr">Kullanıcı adı veya şifre hatalı.</div>
+  </div>
+</div>
+
+<!-- SHELL -->
+<div id="shell">
+  <div class="topbar">
+    <div class="topbar-title">PBK <span>Admin</span></div>
+    <div class="topbar-right">
+      <a href="index.html" target="_blank" class="topbar-site">↗ Siteye Git</a>
+      <span class="topbar-logout" onclick="doLogout()">Çıkış</span>
+    </div>
+  </div>
+
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-section">Genel</div>
+    <div class="nav-item active" data-page="dashboard"><span class="icon">📊</span> Dashboard</div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section">İçerik</div>
+    <div class="nav-item" data-page="haberler"><span class="icon">📰</span> Haberler</div>
+    <div class="nav-item" data-page="etkinlikler"><span class="icon">📅</span> Etkinlikler</div>
+    <div class="nav-item" data-page="kadro"><span class="icon">👥</span> Kadromuz</div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section">Medya</div>
+    <div class="nav-item" data-page="galeri"><span class="icon">🖼️</span> Galeri</div>
+    <div class="nav-item" data-page="kategoriler"><span class="icon">🏷️</span> Kategoriler</div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section">Sistem</div>
+    <div class="nav-item" data-page="ayarlar"><span class="icon">⚙️</span> Site Ayarları</div>
+  </div>
+
+  <div class="main">
+
+    <!-- DASHBOARD -->
+    <div class="page-content" id="page-dashboard">
+      <div class="ph"><h1>Dashboard</h1><p>Sitenize genel bakış</p></div>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-icon red">📰</div><div><span class="stat-num" id="dHaber">—</span><span class="stat-lbl">Haber</span></div></div>
+        <div class="stat-card"><div class="stat-icon orange">📅</div><div><span class="stat-num" id="dEtkinlik">—</span><span class="stat-lbl">Etkinlik</span></div></div>
+        <div class="stat-card"><div class="stat-icon blue">👥</div><div><span class="stat-num" id="dKadro">—</span><span class="stat-lbl">Kadro</span></div></div>
+        <div class="stat-card"><div class="stat-icon green">🖼️</div><div><span class="stat-num" id="dGaleri">—</span><span class="stat-lbl">Fotoğraf</span></div></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>⚡ Hızlı İşlemler</h3></div>
+        <div class="card-body" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px">
+          <button class="btn btn-primary" onclick="goPage('haberler');setTimeout(()=>openHaberModal(),200)">+ Haber Ekle</button>
+          <button class="btn btn-primary" onclick="goPage('etkinlikler');setTimeout(()=>openEtkinlikModal(),200)">+ Etkinlik Ekle</button>
+          <button class="btn btn-primary" onclick="goPage('kadro');setTimeout(()=>openKadroModal(),200)">+ Kadro Ekle</button>
+          <button class="btn btn-primary" onclick="goPage('galeri')">+ Fotoğraf Yükle</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>📋 Son Haberler</h3></div>
+        <div class="card-body" style="padding:0"><div id="dashHaberList"></div></div>
+      </div>
+    </div>
+
+    <!-- HABERLER -->
+    <div class="page-content hidden" id="page-haberler">
+      <div class="ph" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px">
+        <div><h1>Haberler</h1><p>Haber ve duyuruları yönetin</p></div>
+        <button class="btn btn-primary" onclick="openHaberModal()">+ Yeni Haber</button>
+      </div>
+      <div class="card">
+        <div class="card-body" style="padding:0">
+          <table class="tbl"><thead><tr><th>Başlık</th><th>Kategori</th><th>Tarih</th><th style="text-align:right">İşlem</th></tr></thead>
+          <tbody id="haberTblBody"></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ETKİNLİKLER -->
+    <div class="page-content hidden" id="page-etkinlikler">
+      <div class="ph" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px">
+        <div><h1>Etkinlikler</h1><p>Geçmiş ve gelecek etkinlikleri yönetin</p></div>
+        <button class="btn btn-primary" onclick="openEtkinlikModal()">+ Yeni Etkinlik</button>
+      </div>
+      <div class="card">
+        <div class="card-body" style="padding:0">
+          <table class="tbl"><thead><tr><th>Etkinlik</th><th>Tarih</th><th>Konum</th><th style="text-align:right">İşlem</th></tr></thead>
+          <tbody id="etkinlikTblBody"></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- KADRO -->
+    <div class="page-content hidden" id="page-kadro">
+      <div class="ph" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px">
+        <div><h1>Kadromuz</h1><p>Öğretmen ve personel yönetimi</p></div>
+        <button class="btn btn-primary" onclick="openKadroModal()">+ Kadro Ekle</button>
+      </div>
+      <div class="card">
+        <div class="card-body" style="padding:0">
+          <table class="tbl"><thead><tr><th>Ad Soyad</th><th>Görev</th><th>Departman</th><th style="text-align:right">İşlem</th></tr></thead>
+          <tbody id="kadroTblBody"></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- GALERİ -->
+    <div class="page-content hidden" id="page-galeri">
+      <div class="ph"><h1>Galeri</h1><p>Fotoğraf yükle ve yönet</p></div>
+      <div class="card">
+        <div class="card-head"><h3>📤 Fotoğraf Yükle</h3></div>
+        <div class="card-body">
+          <div class="drop-zone" id="dropZone">
+            <input type="file" id="fileInput" multiple accept="image/*">
+            <div class="drop-icon">🖼️</div>
+            <div class="drop-text">Fotoğrafları sürükleyin veya tıklayın</div>
+            <div class="drop-hint">JPG, PNG, WEBP — Birden fazla seçebilirsiniz</div>
+          </div>
+          <div class="preview-grid" id="previewGrid"></div>
+          <div class="form-grid" style="margin-top:16px">
+            <div class="fg"><label>Kategori</label><select id="selCat"></select></div>
+            <div class="fg"><label>Açıklama</label><input type="text" id="inpCaption" placeholder="Etkinlik adı, tarih..."></div>
+          </div>
+          <div class="prog-wrap" id="progWrap">
+            <div class="prog-bg"><div class="prog-bar" id="progBar"></div></div>
+            <div class="prog-txt" id="progTxt">Yükleniyor…</div>
+          </div>
+          <button class="btn btn-primary" id="btnUpload" disabled style="margin-top:16px;width:100%">Yükle</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>🗂️ Mevcut Fotoğraflar</h3></div>
+        <div class="card-body" style="padding:0">
+          <table class="tbl"><thead><tr><th>Önizleme</th><th>Açıklama</th><th>Kategori</th><th>Tarih</th><th style="text-align:right">İşlem</th></tr></thead>
+          <tbody id="galeriTblBody"></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- KATEGORİLER -->
+    <div class="page-content hidden" id="page-kategoriler">
+      <div class="ph"><h1>Kategoriler</h1><p>Galeri kategorilerini yönetin</p></div>
+      <div class="card">
+        <div class="card-head"><h3>➕ Yeni Kategori Ekle</h3></div>
+        <div class="card-body">
+          <div class="form-grid" style="align-items:flex-end">
+            <div class="fg"><label>Kategori Adı</label><input type="text" id="newCatName" placeholder="örn: Gezi, Tiyatro..."></div>
+            <div class="fg"><label>Slug (URL için)</label><input type="text" id="newCatSlug" placeholder="örn: gezi, tiyatro"></div>
+          </div>
+          <button class="btn btn-primary" style="margin-top:14px" onclick="addCategory()">Kategori Ekle</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>🏷️ Mevcut Kategoriler</h3></div>
+        <div class="card-body" style="padding:0">
+          <table class="tbl"><thead><tr><th>Kategori Adı</th><th>Slug</th><th style="text-align:right">İşlem</th></tr></thead>
+          <tbody id="catTblBody"></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- AYARLAR -->
+    <div class="page-content hidden" id="page-ayarlar">
+      <div class="ph"><h1>Site Ayarları</h1><p>İletişim bilgileri ve genel ayarlar</p></div>
+      <div class="card">
+        <div class="card-head"><h3>🏫 Okul Bilgileri</h3></div>
+        <div class="card-body">
+          <div class="form-grid">
+            <div class="fg"><label>Okul Adı</label><input type="text" id="setOkulAdi" placeholder="Pozitif Bilgi Koleji"></div>
+            <div class="fg"><label>Kuruluş Yılı</label><input type="text" id="setKurulus" placeholder="2004"></div>
+            <div class="fg full"><label>Slogan</label><input type="text" id="setSlogan" placeholder="Eğitimde Pozitif Etki Yanınızda"></div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>📞 İletişim Bilgileri</h3></div>
+        <div class="card-body">
+          <div class="form-grid">
+            <div class="fg"><label>Telefon</label><input type="text" id="setTel" placeholder="+90 555 192 5153"></div>
+            <div class="fg"><label>E-posta</label><input type="email" id="setEmail" placeholder="pozitifbilgikoleji18@gmail.com"></div>
+            <div class="fg full"><label>Adres</label><input type="text" id="setAdres" placeholder="Menteş Mh. Ali Kaya Mutlu Cad. 71/A Yenişehir / Mersin"></div>
+            <div class="fg"><label>Instagram</label><input type="text" id="setInstagram" placeholder="@pozitifbilgikoleji"></div>
+            <div class="fg"><label>WhatsApp</label><input type="text" id="setWhatsapp" placeholder="+905551925153"></div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>🎛️ Site Özellikleri</h3></div>
+        <div class="card-body" style="display:flex;flex-direction:column;gap:18px">
+          <div class="toggle-wrap">
+            <label class="toggle"><input type="checkbox" id="togKayit"><span class="toggle-slider"></span></label>
+            <span class="toggle-label">🏆 "Kayıtlar Açık" bandını göster</span>
+          </div>
+          <div class="toggle-wrap">
+            <label class="toggle"><input type="checkbox" id="togDuyuru"><span class="toggle-slider"></span></label>
+            <span class="toggle-label">📢 Ana sayfada duyuru bandı göster</span>
+          </div>
+          <div class="fg" style="max-width:500px">
+            <label>Duyuru Metni</label>
+            <input type="text" id="setDuyuruTxt" placeholder="2025-2026 Kayıtları Başladı!">
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>🔐 Şifre Değiştir</h3></div>
+        <div class="card-body">
+          <div class="form-grid">
+            <div class="fg"><label>Mevcut Şifre</label><input type="password" id="setPassOld"></div>
+            <div class="fg"><label>Yeni Şifre</label><input type="password" id="setPassNew"></div>
+          </div>
+          <button class="btn btn-danger" style="margin-top:14px" onclick="changePass()">Şifreyi Güncelle</button>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;margin-top:4px">
+        <button class="btn btn-success" onclick="saveSettings()">💾 Ayarları Kaydet</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-bg" id="haberModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('haberModal')">✕</button>
+    <h3 id="haberModalTitle">Yeni Haber</h3>
+    <input type="hidden" id="haberEditId">
+    <div class="form-grid col1" style="gap:14px">
+      <div class="fg"><label>Başlık *</label><input type="text" id="hBaslik" placeholder="Haber başlığı"></div>
+      <div class="form-grid">
+        <div class="fg"><label>Kategori</label>
+          <select id="hKategori"><option>Duyuru</option><option>Etkinlik</option><option>Başarı</option><option>Spor</option><option>Kültür</option><option>Diğer</option></select>
+        </div>
+        <div class="fg"><label>Tarih * (geçmiş tarih girilebilir)</label><input type="date" id="hTarih"></div>
+      </div>
+      <div class="fg"><label>İçerik *</label><textarea id="hIcerik" style="min-height:120px" placeholder="Haber içeriği..."></textarea></div>
+      <div class="fg full"><label>Görsel (isteğe bağlı)</label><div id="haberImgWrap"><div class="drop-zone" id="haberDropZone" style="padding:24px"><input type="file" id="haberFileInput" accept="image/*" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%"><div class="drop-icon" style="font-size:1.5rem;margin-bottom:6px">🖼️</div><div class="drop-text" style="font-size:.82rem">Fotoğraf seçin veya sürükleyin</div></div><div id="haberImgPreview" style="display:none;position:relative;margin-top:10px"><img id="haberImgThumb" src="" alt="" style="width:100%;max-height:180px;object-fit:cover;display:block;border-radius:8px"><button onclick="clearHaberImg()" style="position:absolute;top:6px;right:6px;background:rgba(220,38,38,.9);color:white;border:none;border-radius:4px;width:26px;height:26px;cursor:pointer;font-size:.75rem">✕</button></div><div id="haberImgProgress" style="display:none;margin-top:8px"><div style="height:3px;background:var(--g200);border-radius:10px;overflow:hidden"><div id="haberImgBar" style="height:100%;background:var(--turuncu);width:0;border-radius:10px"></div></div><div id="haberImgTxt" style="font-size:.75rem;color:var(--g400);margin-top:4px;text-align:center">Yükleniyor...</div></div></div><input type="hidden" id="hGorsel"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary" onclick="closeModal('haberModal')">İptal</button>
+      <button class="btn btn-primary" onclick="saveHaber()">Kaydet</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="etkinlikModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('etkinlikModal')">✕</button>
+    <h3 id="etkinlikModalTitle">Yeni Etkinlik</h3>
+    <input type="hidden" id="etkinlikEditId">
+    <div class="form-grid col1" style="gap:14px">
+      <div class="fg"><label>Etkinlik Adı *</label><input type="text" id="eAd" placeholder="Etkinlik adı"></div>
+      <div class="form-grid">
+        <div class="fg"><label>Tarih * (geçmiş tarih girilebilir)</label><input type="date" id="eTarih"></div>
+        <div class="fg"><label>Saat</label><input type="time" id="eSaat" value="09:00"></div>
+      </div>
+      <div class="fg"><label>Konum</label><input type="text" id="eKonum" placeholder="Okul bahçesi, salon..."></div>
+      <div class="fg"><label>Açıklama</label><textarea id="eAciklama" placeholder="Etkinlik detayları..."></textarea></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary" onclick="closeModal('etkinlikModal')">İptal</button>
+      <button class="btn btn-primary" onclick="saveEtkinlik()">Kaydet</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="kadroModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('kadroModal')">✕</button>
+    <h3 id="kadroModalTitle">Kadro Ekle</h3>
+    <input type="hidden" id="kadroEditId">
+    <div class="form-grid col1" style="gap:14px">
+      <div class="fg"><label>Ad Soyad *</label><input type="text" id="kAd" placeholder="Ad Soyad"></div>
+      <div class="form-grid">
+        <div class="fg"><label>Görev *</label><input type="text" id="kRol" placeholder="Matematik Öğretmeni"></div>
+        <div class="fg"><label>Departman</label>
+          <select id="kDept"><option>Yönetim</option><option>Ortaokul</option><option>Lise</option><option>VIP Kurs</option><option>Destek Personeli</option></select>
+        </div>
+      </div>
+      <div class="fg full">
+        <label>Fotoğraf (isteğe bağlı)</label>
+        <div id="kadroDropZone" class="drop-zone" style="padding:20px">
+          <input type="file" id="kadroFileInput" accept="image/*" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%">
+          <div class="drop-icon" style="font-size:1.4rem;margin-bottom:6px">👤</div>
+          <div class="drop-text" style="font-size:.82rem">Fotoğraf seçin veya sürükleyin</div>
+        </div>
+        <div id="kadroImgPreview" style="display:none;position:relative;margin-top:10px">
+          <img id="kadroImgThumb" src="" alt="" style="width:100%;max-height:160px;object-fit:cover;display:block;border-radius:8px">
+          <button onclick="clearKadroImg()" style="position:absolute;top:6px;right:6px;background:rgba(220,38,38,.9);color:white;border:none;border-radius:4px;width:26px;height:26px;cursor:pointer;font-size:.75rem">✕</button>
+        </div>
+        <div id="kadroImgProgress" style="display:none;margin-top:8px">
+          <div style="height:3px;background:var(--g200);border-radius:10px;overflow:hidden">
+            <div id="kadroImgBar" style="height:100%;background:var(--turuncu);width:0;border-radius:10px"></div>
+          </div>
+          <div style="font-size:.75rem;color:var(--g400);margin-top:4px;text-align:center">Yükleniyor…</div>
+        </div>
+        <input type="hidden" id="kFoto">
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary" onclick="closeModal('kadroModal')">İptal</button>
+      <button class="btn btn-primary" onclick="saveKadro()">Kaydet</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import {
+  getFirestore, collection, addDoc, updateDoc, deleteDoc, doc,
+  query, orderBy, onSnapshot, getDocs, setDoc, getDoc
+} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+const FB = {
+  apiKey:"AIzaSyBQsrZLTj4_TULmPbglm8HdKMsy0WyfsqA",
+  authDomain:"pbkoleji.firebaseapp.com",
+  projectId:"pbkoleji",
+  storageBucket:"pbkoleji.firebasestorage.app",
+  messagingSenderId:"438741962860",
+  appId:"1:438741962860:web:be6f0d747df17c83c08849"
+};
+const CLOUDINARY_CLOUD  = 'dgh2lrydr';
+const CLOUDINARY_PRESET = 'pbk_galeri';
+
+const app = initializeApp(FB);
+const db  = getFirestore(app);
+
+/* ── AUTH ── */
+const ADMIN_USER = 'pbkadmin';
+let adminPass = localStorage.getItem('pbk_admin_pass') || 'pbk2024';
+
+window.doLogin = function() {
+  const u = document.getElementById('loginUser').value.trim();
+  const p = document.getElementById('loginPass').value;
+  if (u === ADMIN_USER && p === adminPass) {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('shell').style.display = 'block';
+    initAll();
+  } else {
+    document.getElementById('loginErr').style.display = 'block';
+  }
+};
+document.getElementById('loginPass').addEventListener('keydown', e => { if(e.key==='Enter') window.doLogin(); });
+
+window.doLogout = function() {
+  document.getElementById('shell').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('loginUser').value = '';
+  document.getElementById('loginPass').value = '';
+};
+
+window.changePass = function() {
+  const old = document.getElementById('setPassOld').value;
+  const nw  = document.getElementById('setPassNew').value;
+  if (old !== adminPass) { showToast('Mevcut şifre hatalı!', true); return; }
+  if (nw.length < 4)     { showToast('En az 4 karakter olmalı!', true); return; }
+  adminPass = nw;
+  localStorage.setItem('pbk_admin_pass', nw);
+  document.getElementById('setPassOld').value = '';
+  document.getElementById('setPassNew').value = '';
+  showToast('Şifre güncellendi ✓');
+};
+
+/* ── NAV ── */
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', () => goPage(item.dataset.page));
+});
+window.goPage = function(page) {
+  document.querySelectorAll('.nav-item').forEach(i => i.classList.toggle('active', i.dataset.page === page));
+  document.querySelectorAll('.page-content').forEach(p => p.classList.toggle('hidden', p.id !== 'page-'+page));
+};
+
+/* ── MODAL ── */
+window.openModal  = id => document.getElementById(id).classList.add('open');
+window.closeModal = id => document.getElementById(id).classList.remove('open');
+document.querySelectorAll('.modal-bg').forEach(m => m.addEventListener('click', e => { if(e.target===m) m.classList.remove('open'); }));
+
+/* ── TOAST ── */
+let toastTimer;
+window.showToast = function(msg, err=false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'toast'+(err?' err':'');
+  requestAnimationFrame(() => t.classList.add('show'));
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3200);
+};
+
+/* ── HELPERS ── */
+function formatDate(dateStr) {
+  if (!dateStr) return '—';
+  return new Date(dateStr).toLocaleDateString('tr-TR', {day:'numeric',month:'long',year:'numeric'});
+}
+
+/* ══ HABER GÖRSEL UPLOAD ══ */
+const haberFileInput  = document.getElementById('haberFileInput');
+const haberDropZone   = document.getElementById('haberDropZone');
+const haberImgPreview = document.getElementById('haberImgPreview');
+const haberImgThumb   = document.getElementById('haberImgThumb');
+const haberImgProg    = document.getElementById('haberImgProgress');
+const haberImgBar     = document.getElementById('haberImgBar');
+
+haberDropZone.addEventListener('dragover', e => { e.preventDefault(); haberDropZone.classList.add('drag'); });
+haberDropZone.addEventListener('dragleave', () => haberDropZone.classList.remove('drag'));
+haberDropZone.addEventListener('drop', e => { e.preventDefault(); haberDropZone.classList.remove('drag'); const f = e.dataTransfer.files[0]; if(f && f.type.startsWith('image/')) uploadHaberImg(f); });
+haberFileInput.addEventListener('change', e => { if(e.target.files[0]) uploadHaberImg(e.target.files[0]); });
+
+async function uploadHaberImg(file) {
+  haberDropZone.style.display   = 'none';
+  haberImgProg.style.display    = 'block';
+  haberImgPreview.style.display = 'none';
+  haberImgBar.style.width = '30%';
+  try {
+    const fd = new FormData();
+    fd.append('file', file);
+    fd.append('upload_preset', CLOUDINARY_PRESET);
+    fd.append('folder', 'pbk_haberler');
+    haberImgBar.style.width = '70%';
+    const res  = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, {method:'POST',body:fd});
+    const data = await res.json();
+    if (!data.secure_url) throw new Error(data.error?.message||'Hata');
+    haberImgBar.style.width = '100%';
+    document.getElementById('hGorsel').value = data.secure_url;
+    haberImgThumb.src = data.secure_url;
+    haberImgProg.style.display    = 'none';
+    haberImgPreview.style.display = 'block';
+    showToast('Görsel yüklendi ✓');
+  } catch(err) {
+    haberImgProg.style.display  = 'none';
+    haberDropZone.style.display = 'block';
+    showToast('Görsel yüklenemedi: '+err.message, true);
+  }
+}
+
+window.clearHaberImg = function() {
+  document.getElementById('hGorsel').value = '';
+  document.getElementById('haberImgThumb').src = '';
+  document.getElementById('haberImgPreview').style.display = 'none';
+  document.getElementById('haberDropZone').style.display   = 'block';
+  document.getElementById('haberFileInput').value = '';
+};
+
+/* ══ HABERLER ══ */
+let haberler = [];
+window.openHaberModal = function() {
+  clearHaberForm();
+  openModal('haberModal');
+};
+onSnapshot(query(collection(db,'haberler'), orderBy('tarih','desc')), snap => {
+  haberler = snap.docs.map(d => ({id:d.id,...d.data()}));
+  renderHaberler();
+  document.getElementById('dHaber').textContent = haberler.length;
+  renderDashHaberler();
+});
+function renderHaberler() {
+  const tbody = document.getElementById('haberTblBody');
+  if (!haberler.length) { tbody.innerHTML = `<tr><td colspan="4"><div class="empty"><div class="e-icon">📰</div><p>Henüz haber yok</p></div></td></tr>`; return; }
+  const cc = {Duyuru:'red',Etkinlik:'orange',Başarı:'green',Spor:'blue',Kültür:'purple',Diğer:'gray'};
+  tbody.innerHTML = haberler.map(h => `<tr>
+    <td style="font-weight:600;max-width:280px">${h.baslik}</td>
+    <td><span class="badge badge-${cc[h.kategori]||'gray'}">${h.kategori}</span></td>
+    <td style="color:var(--g400);font-size:.82rem">${formatDate(h.tarih)}</td>
+    <td style="text-align:right"><div style="display:flex;gap:6px;justify-content:flex-end">
+      <button class="btn btn-secondary btn-sm" onclick="editHaber('${h.id}')">Düzenle</button>
+      <button class="btn btn-danger btn-sm" onclick="delHaber('${h.id}')">Sil</button>
+    </div></td></tr>`).join('');
+}
+function renderDashHaberler() {
+  const el = document.getElementById('dashHaberList');
+  if (!haberler.length) { el.innerHTML = '<div class="empty"><p>Henüz haber yok</p></div>'; return; }
+  el.innerHTML = `<table class="tbl"><thead><tr><th>Başlık</th><th>Tarih</th></tr></thead><tbody>`
+    + haberler.slice(0,5).map(h => `<tr><td style="font-weight:600">${h.baslik}</td><td style="color:var(--g400);font-size:.82rem">${formatDate(h.tarih)}</td></tr>`).join('')
+    + `</tbody></table>`;
+}
+window.saveHaber = async function() {
+  const id = document.getElementById('haberEditId').value;
+  const data = { baslik:document.getElementById('hBaslik').value.trim(), kategori:document.getElementById('hKategori').value, tarih:document.getElementById('hTarih').value, icerik:document.getElementById('hIcerik').value.trim(), gorsel:document.getElementById('hGorsel').value.trim() };
+  if (!data.baslik||!data.tarih||!data.icerik) { showToast('Başlık, tarih ve içerik zorunlu!', true); return; }
+  try {
+    if (id) await updateDoc(doc(db,'haberler',id), data);
+    else    await addDoc(collection(db,'haberler'), {...data, createdAt:Date.now()});
+    closeModal('haberModal'); clearHaberForm();
+    showToast(id ? 'Haber güncellendi ✓' : 'Haber eklendi ✓');
+  } catch(e) { showToast('Hata: '+e.message, true); }
+};
+window.editHaber = function(id) {
+  const h = haberler.find(x => x.id===id); if (!h) return;
+  document.getElementById('haberEditId').value = id;
+  document.getElementById('haberModalTitle').textContent = 'Haberi Düzenle';
+  document.getElementById('hBaslik').value   = h.baslik||'';
+  document.getElementById('hKategori').value = h.kategori||'Duyuru';
+  document.getElementById('hTarih').value    = h.tarih||'';
+  document.getElementById('hIcerik').value   = h.icerik||'';
+  document.getElementById('hGorsel').value   = h.gorsel||'';
+  // Mevcut görsel varsa göster
+  if (h.gorsel) {
+    document.getElementById('haberImgThumb').src = h.gorsel;
+    document.getElementById('haberImgPreview').style.display = 'block';
+    document.getElementById('haberDropZone').style.display   = 'none';
+  } else {
+    document.getElementById('haberImgPreview').style.display = 'none';
+    document.getElementById('haberDropZone').style.display   = 'block';
+  }
+  openModal('haberModal');
+};
+window.delHaber = async function(id) {
+  if (!confirm('Bu haberi silmek istediğinizden emin misiniz?')) return;
+  try { await deleteDoc(doc(db,'haberler',id)); showToast('Haber silindi.'); }
+  catch(e) { showToast('Hata: '+e.message, true); }
+};
+function clearHaberForm() {
+  ['haberEditId','hBaslik','hTarih','hIcerik','hGorsel'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('haberModalTitle').textContent = 'Yeni Haber';
+  document.getElementById('hKategori').value = 'Duyuru';
+  // Görsel alanını sıfırla
+  document.getElementById('haberImgPreview').style.display = 'none';
+  document.getElementById('haberDropZone').style.display   = 'block';
+  document.getElementById('haberImgProgress').style.display = 'none';
+  document.getElementById('haberFileInput').value = '';
+  document.getElementById('haberImgThumb').src = '';
+}
+
+/* ══ KADRO GÖRSEL UPLOAD ══ */
+const kadroFileInput  = document.getElementById('kadroFileInput');
+const kadroDropZone   = document.getElementById('kadroDropZone');
+const kadroImgPreview = document.getElementById('kadroImgPreview');
+const kadroImgThumb   = document.getElementById('kadroImgThumb');
+const kadroImgProg    = document.getElementById('kadroImgProgress');
+const kadroImgBar     = document.getElementById('kadroImgBar');
+
+kadroDropZone.addEventListener('dragover', e => { e.preventDefault(); kadroDropZone.classList.add('drag'); });
+kadroDropZone.addEventListener('dragleave', () => kadroDropZone.classList.remove('drag'));
+kadroDropZone.addEventListener('drop', e => { e.preventDefault(); kadroDropZone.classList.remove('drag'); const f = e.dataTransfer.files[0]; if(f && f.type.startsWith('image/')) uploadKadroImg(f); });
+kadroFileInput.addEventListener('change', e => { if(e.target.files[0]) uploadKadroImg(e.target.files[0]); });
+
+async function uploadKadroImg(file) {
+  kadroDropZone.style.display   = 'none';
+  kadroImgProg.style.display    = 'block';
+  kadroImgPreview.style.display = 'none';
+  kadroImgBar.style.width = '30%';
+  try {
+    const fd = new FormData();
+    fd.append('file', file);
+    fd.append('upload_preset', CLOUDINARY_PRESET);
+    fd.append('folder', 'pbk_kadro');
+    kadroImgBar.style.width = '70%';
+    const res  = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, {method:'POST',body:fd});
+    const data = await res.json();
+    if (!data.secure_url) throw new Error(data.error?.message||'Hata');
+    kadroImgBar.style.width = '100%';
+    document.getElementById('kFoto').value = data.secure_url;
+    kadroImgThumb.src = data.secure_url;
+    kadroImgProg.style.display    = 'none';
+    kadroImgPreview.style.display = 'block';
+    showToast('Fotoğraf yüklendi ✓');
+  } catch(err) {
+    kadroImgProg.style.display  = 'none';
+    kadroDropZone.style.display = 'block';
+    showToast('Fotoğraf yüklenemedi: '+err.message, true);
+  }
+}
+
+window.clearKadroImg = function() {
+  document.getElementById('kFoto').value = '';
+  kadroImgThumb.src = '';
+  kadroImgPreview.style.display = 'none';
+  kadroDropZone.style.display   = 'block';
+  kadroFileInput.value = '';
+};
+
+/* ══ ETKİNLİKLER ══ */
+let etkinlikler = [];
+window.openEtkinlikModal = function() {
+  clearEtkinlikForm();
+  openModal('etkinlikModal');
+};
+onSnapshot(query(collection(db,'etkinlikler'), orderBy('tarih','desc')), snap => {
+  etkinlikler = snap.docs.map(d => ({id:d.id,...d.data()}));
+  renderEtkinlikler();
+  document.getElementById('dEtkinlik').textContent = etkinlikler.length;
+});
+function renderEtkinlikler() {
+  const tbody = document.getElementById('etkinlikTblBody');
+  if (!etkinlikler.length) { tbody.innerHTML = `<tr><td colspan="4"><div class="empty"><div class="e-icon">📅</div><p>Henüz etkinlik yok</p></div></td></tr>`; return; }
+  tbody.innerHTML = etkinlikler.map(e => {
+    const gelecek = new Date(e.tarih) >= new Date(new Date().toDateString());
+    return `<tr>
+      <td style="font-weight:600">${e.ad}</td>
+      <td><span style="font-size:.82rem;color:var(--g400)">${formatDate(e.tarih)}</span> <span class="badge badge-${gelecek?'green':'gray'}">${gelecek?'Yaklaşan':'Geçmiş'}</span></td>
+      <td style="font-size:.82rem;color:var(--g400)">${e.konum||'—'}</td>
+      <td style="text-align:right"><div style="display:flex;gap:6px;justify-content:flex-end">
+        <button class="btn btn-secondary btn-sm" onclick="editEtkinlik('${e.id}')">Düzenle</button>
+        <button class="btn btn-danger btn-sm" onclick="delEtkinlik('${e.id}')">Sil</button>
+      </div></td></tr>`;
+  }).join('');
+}
+window.saveEtkinlik = async function() {
+  const id = document.getElementById('etkinlikEditId').value;
+  const data = { ad:document.getElementById('eAd').value.trim(), tarih:document.getElementById('eTarih').value, saat:document.getElementById('eSaat').value, konum:document.getElementById('eKonum').value.trim(), aciklama:document.getElementById('eAciklama').value.trim() };
+  if (!data.ad||!data.tarih) { showToast('Ad ve tarih zorunlu!', true); return; }
+  try {
+    if (id) await updateDoc(doc(db,'etkinlikler',id), data);
+    else    await addDoc(collection(db,'etkinlikler'), {...data, createdAt:Date.now()});
+    closeModal('etkinlikModal'); clearEtkinlikForm();
+    showToast(id ? 'Etkinlik güncellendi ✓' : 'Etkinlik eklendi ✓');
+  } catch(e) { showToast('Hata: '+e.message, true); }
+};
+window.editEtkinlik = function(id) {
+  const e = etkinlikler.find(x => x.id===id); if (!e) return;
+  document.getElementById('etkinlikEditId').value = id;
+  document.getElementById('etkinlikModalTitle').textContent = 'Etkinliği Düzenle';
+  document.getElementById('eAd').value       = e.ad||'';
+  document.getElementById('eTarih').value    = e.tarih||'';
+  document.getElementById('eSaat').value     = e.saat||'09:00';
+  document.getElementById('eKonum').value    = e.konum||'';
+  document.getElementById('eAciklama').value = e.aciklama||'';
+  openModal('etkinlikModal');
+};
+window.delEtkinlik = async function(id) {
+  if (!confirm('Bu etkinliği silmek istediğinizden emin misiniz?')) return;
+  try { await deleteDoc(doc(db,'etkinlikler',id)); showToast('Etkinlik silindi.'); }
+  catch(e) { showToast('Hata: '+e.message, true); }
+};
+function clearEtkinlikForm() {
+  ['etkinlikEditId','eAd','eTarih','eKonum','eAciklama'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('etkinlikModalTitle').textContent = 'Yeni Etkinlik';
+  document.getElementById('eSaat').value = '09:00';
+}
+
+/* ══ KADRO ══ */
+let kadro = [];
+window.openKadroModal = function() {
+  clearKadroForm();
+  openModal('kadroModal');
+};
+onSnapshot(query(collection(db,'kadro'), orderBy('createdAt','asc')), snap => {
+  kadro = snap.docs.map(d => ({id:d.id,...d.data()}));
+  renderKadro();
+  document.getElementById('dKadro').textContent = kadro.length;
+});
+function renderKadro() {
+  const tbody = document.getElementById('kadroTblBody');
+  if (!kadro.length) { tbody.innerHTML = `<tr><td colspan="4"><div class="empty"><div class="e-icon">👥</div><p>Henüz kadro üyesi yok</p></div></td></tr>`; return; }
+  const dc = {Yönetim:'red',Ortaokul:'blue',Lise:'purple','VIP Kurs':'orange','Destek Personeli':'gray'};
+  tbody.innerHTML = kadro.map(k => `<tr>
+    <td style="font-weight:600">${k.ad}</td>
+    <td style="font-size:.85rem;color:var(--g400)">${k.rol}</td>
+    <td><span class="badge badge-${dc[k.dept]||'gray'}">${k.dept}</span></td>
+    <td style="text-align:right"><div style="display:flex;gap:6px;justify-content:flex-end">
+      <button class="btn btn-secondary btn-sm" onclick="editKadro('${k.id}')">Düzenle</button>
+      <button class="btn btn-danger btn-sm" onclick="delKadro('${k.id}')">Sil</button>
+    </div></td></tr>`).join('');
+}
+window.saveKadro = async function() {
+  const id = document.getElementById('kadroEditId').value;
+  const data = { ad:document.getElementById('kAd').value.trim(), rol:document.getElementById('kRol').value.trim(), dept:document.getElementById('kDept').value, foto:document.getElementById('kFoto').value.trim() };
+  if (!data.ad||!data.rol) { showToast('Ad ve görev zorunlu!', true); return; }
+  try {
+    if (id) await updateDoc(doc(db,'kadro',id), data);
+    else    await addDoc(collection(db,'kadro'), {...data, createdAt:Date.now()});
+    closeModal('kadroModal'); clearKadroForm();
+    showToast(id ? 'Kadro güncellendi ✓' : 'Kadro üyesi eklendi ✓');
+  } catch(e) { showToast('Hata: '+e.message, true); }
+};
+window.editKadro = function(id) {
+  const k = kadro.find(x => x.id===id); if (!k) return;
+  document.getElementById('kadroEditId').value = id;
+  document.getElementById('kadroModalTitle').textContent = 'Kadroyu Düzenle';
+  document.getElementById('kAd').value   = k.ad||'';
+  document.getElementById('kRol').value  = k.rol||'';
+  document.getElementById('kDept').value = k.dept||'Ortaokul';
+  document.getElementById('kFoto').value = k.foto||'';
+  if (k.foto) {
+    document.getElementById('kadroImgThumb').src = k.foto;
+    document.getElementById('kadroImgPreview').style.display = 'block';
+    document.getElementById('kadroDropZone').style.display   = 'none';
+  } else {
+    document.getElementById('kadroImgPreview').style.display = 'none';
+    document.getElementById('kadroDropZone').style.display   = 'block';
+  }
+  openModal('kadroModal');
+};
+window.delKadro = async function(id) {
+  if (!confirm('Bu kişiyi kadrodan çıkarmak istediğinizden emin misiniz?')) return;
+  try { await deleteDoc(doc(db,'kadro',id)); showToast('Kadro üyesi silindi.'); }
+  catch(e) { showToast('Hata: '+e.message, true); }
+};
+function clearKadroForm() {
+  ['kadroEditId','kAd','kRol','kFoto'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('kadroModalTitle').textContent = 'Kadro Ekle';
+  document.getElementById('kadroImgPreview').style.display = 'none';
+  document.getElementById('kadroDropZone').style.display   = 'block';
+  document.getElementById('kadroImgProgress').style.display = 'none';
+  document.getElementById('kadroFileInput').value = '';
+  document.getElementById('kadroImgThumb').src = '';
+}
+
+/* ══ KATEGORİLER ══ */
+let categories = [];
+const defaultCats = [{slug:'etkinlik',name:'Etkinlik'},{slug:'ders',name:'Ders'},{slug:'spor',name:'Spor'},{slug:'mezuniyet',name:'Mezuniyet'},{slug:'diger',name:'Diğer'}];
+
+async function loadCategories() {
+  try {
+    const snap = await getDocs(collection(db,'kategoriler'));
+    if (snap.empty) {
+      for (const c of defaultCats) await setDoc(doc(db,'kategoriler',c.slug), c);
+      categories = [...defaultCats];
+    } else {
+      categories = snap.docs.map(d => ({id:d.id,...d.data()}));
+    }
+  } catch(e) { categories = [...defaultCats]; }
+  renderCategories(); populateCatSelect();
+}
+onSnapshot(collection(db,'kategoriler'), snap => {
+  categories = snap.docs.map(d => ({id:d.id,...d.data()}));
+  renderCategories(); populateCatSelect();
+});
+function renderCategories() {
+  const tbody = document.getElementById('catTblBody');
+  if (!tbody) return;
+  if (!categories.length) { tbody.innerHTML = `<tr><td colspan="3"><div class="empty"><p>Kategori yok</p></div></td></tr>`; return; }
+  tbody.innerHTML = categories.map(c => `<tr>
+    <td style="font-weight:600">${c.name}</td>
+    <td><code style="background:var(--g100);padding:3px 8px;border-radius:4px;font-size:.8rem">${c.slug||c.id}</code></td>
+    <td style="text-align:right"><button class="btn btn-danger btn-sm" onclick="delCategory('${c.id||c.slug}')">Sil</button></td>
+  </tr>`).join('');
+}
+function populateCatSelect() {
+  const sel = document.getElementById('selCat');
+  if (!sel) return;
+  sel.innerHTML = categories.map(c => `<option value="${c.slug||c.id}">${c.name}</option>`).join('');
+}
+window.addCategory = async function() {
+  const name = document.getElementById('newCatName').value.trim();
+  let slug = document.getElementById('newCatSlug').value.trim().toLowerCase().replace(/\s+/g,'-');
+  if (!name) { showToast('Kategori adı zorunlu!', true); return; }
+  if (!slug) slug = name.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
+  try {
+    await setDoc(doc(db,'kategoriler',slug), {name, slug});
+    document.getElementById('newCatName').value = '';
+    document.getElementById('newCatSlug').value = '';
+    showToast('Kategori eklendi ✓');
+  } catch(e) { showToast('Hata: '+e.message, true); }
+};
+window.delCategory = async function(id) {
+  if (!confirm('Bu kategoriyi silmek istediğinizden emin misiniz?')) return;
+  try { await deleteDoc(doc(db,'kategoriler',id)); showToast('Kategori silindi.'); }
+  catch(e) { showToast('Hata: '+e.message, true); }
+};
+
+/* ══ GALERİ ══ */
+let galeriPhotos = [];
+let selectedFiles = [];
+onSnapshot(query(collection(db,'galeri'), orderBy('createdAt','desc')), snap => {
+  galeriPhotos = snap.docs.map(d => ({id:d.id,...d.data()}));
+  renderGaleri();
+  document.getElementById('dGaleri').textContent = galeriPhotos.length;
+});
+function renderGaleri() {
+  const tbody = document.getElementById('galeriTblBody');
+  if (!galeriPhotos.length) { tbody.innerHTML = `<tr><td colspan="5"><div class="empty"><div class="e-icon">🖼️</div><p>Henüz fotoğraf yok</p></div></td></tr>`; return; }
+  const catName = slug => { const c = categories.find(x => (x.slug||x.id)===slug); return c ? c.name : slug; };
+  tbody.innerHTML = galeriPhotos.map(p => `<tr>
+    <td><img class="tbl-thumb" src="${p.url}" alt=""></td>
+    <td style="font-weight:500;max-width:200px">${p.caption||'—'}</td>
+    <td><span class="badge badge-orange">${catName(p.cat)}</span></td>
+    <td style="font-size:.8rem;color:var(--g400)">${new Date(p.createdAt).toLocaleDateString('tr-TR',{day:'numeric',month:'short',year:'numeric'})}</td>
+    <td style="text-align:right"><button class="btn btn-danger btn-sm" onclick="delPhoto('${p.id}')">Sil</button></td>
+  </tr>`).join('');
+}
+
+const dropZone  = document.getElementById('dropZone');
+const fileInput = document.getElementById('fileInput');
+const prevGrid  = document.getElementById('previewGrid');
+const btnUpload = document.getElementById('btnUpload');
+
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag'));
+dropZone.addEventListener('drop', e => { e.preventDefault(); dropZone.classList.remove('drag'); handleFiles(Array.from(e.dataTransfer.files).filter(f=>f.type.startsWith('image/'))); });
+fileInput.addEventListener('change', e => handleFiles(Array.from(e.target.files)));
+
+function handleFiles(files) {
+  selectedFiles = files;
+  prevGrid.innerHTML = '';
+  files.forEach((f,i) => {
+    const r = new FileReader();
+    r.onload = ev => {
+      const div = document.createElement('div');
+      div.className = 'preview-item'; div.id = 'prev_'+i;
+      div.innerHTML = `<img src="${ev.target.result}"><button class="preview-remove" onclick="rmPreview(${i})">✕</button><div class="preview-status" id="ps_${i}"></div>`;
+      prevGrid.appendChild(div);
+    };
+    r.readAsDataURL(f);
+  });
+  btnUpload.disabled = files.length===0;
+  btnUpload.textContent = files.length ? `${files.length} Fotoğraf Yükle` : 'Yükle';
+}
+window.rmPreview = i => { selectedFiles = selectedFiles.filter((_,idx)=>idx!==i); handleFiles(selectedFiles); };
+
+btnUpload.addEventListener('click', async () => {
+  if (!selectedFiles.length) return;
+  const cat = document.getElementById('selCat').value;
+  const caption = document.getElementById('inpCaption').value.trim();
+  btnUpload.disabled = true;
+  const pw = document.getElementById('progWrap'), pb = document.getElementById('progBar'), pt = document.getElementById('progTxt');
+  pw.style.display = 'block';
+  let done = 0;
+  for (let i = 0; i < selectedFiles.length; i++) {
+    const ps = document.getElementById('ps_'+i);
+    if (ps) { ps.textContent='⏳'; ps.classList.add('show'); }
+    pt.textContent = `Yükleniyor ${i+1} / ${selectedFiles.length}…`;
+    pb.style.width = Math.round((i/selectedFiles.length)*100)+'%';
+    try {
+      const fd = new FormData();
+      fd.append('file', selectedFiles[i]);
+      fd.append('upload_preset', CLOUDINARY_PRESET);
+      fd.append('folder', 'pbk_galeri');
+      const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, {method:'POST',body:fd});
+      const data = await res.json();
+      if (!data.secure_url) throw new Error(data.error?.message||'Cloudinary hatası');
+      await addDoc(collection(db,'galeri'), {url:data.secure_url, publicId:data.public_id, cat, caption, createdAt:Date.now()});
+      if (ps) ps.textContent='✅';
+      done++;
+    } catch(err) {
+      if (ps) ps.textContent='❌';
+      showToast('Hata: '+err.message, true);
+    }
+  }
+  pb.style.width = '100%';
+  pt.textContent = `${done} fotoğraf yüklendi!`;
+  setTimeout(() => { pw.style.display='none'; pb.style.width='0'; }, 2000);
+  btnUpload.disabled = false; selectedFiles = [];
+  prevGrid.innerHTML = ''; fileInput.value = '';
+  btnUpload.textContent = 'Yükle';
+  document.getElementById('inpCaption').value = '';
+  if (done > 0) showToast(`✓ ${done} fotoğraf yüklendi!`);
+});
+
+window.delPhoto = async function(id) {
+  if (!confirm('Bu fotoğrafı silmek istediğinizden emin misiniz?')) return;
+  try { await deleteDoc(doc(db,'galeri',id)); showToast('Fotoğraf silindi.'); }
+  catch(e) { showToast('Hata: '+e.message, true); }
+};
+
+/* ══ AYARLAR ══ */
+async function loadSettings() {
+  try {
+    const snap = await getDoc(doc(db,'ayarlar','site'));
+    if (snap.exists()) {
+      const s = snap.data();
+      document.getElementById('setOkulAdi').value   = s.okulAdi||'';
+      document.getElementById('setKurulus').value   = s.kurulus||'';
+      document.getElementById('setSlogan').value    = s.slogan||'';
+      document.getElementById('setTel').value       = s.tel||'';
+      document.getElementById('setEmail').value     = s.email||'';
+      document.getElementById('setAdres').value     = s.adres||'';
+      document.getElementById('setInstagram').value = s.instagram||'';
+      document.getElementById('setWhatsapp').value  = s.whatsapp||'';
+      document.getElementById('togKayit').checked   = s.kayitAcik||false;
+      document.getElementById('togDuyuru').checked  = s.duyuruAcik||false;
+      document.getElementById('setDuyuruTxt').value = s.duyuruTxt||'';
+    }
+  } catch(e) {}
+}
+window.saveSettings = async function() {
+  const data = {
+    okulAdi:   document.getElementById('setOkulAdi').value.trim(),
+    kurulus:   document.getElementById('setKurulus').value.trim(),
+    slogan:    document.getElementById('setSlogan').value.trim(),
+    tel:       document.getElementById('setTel').value.trim(),
+    email:     document.getElementById('setEmail').value.trim(),
+    adres:     document.getElementById('setAdres').value.trim(),
+    instagram: document.getElementById('setInstagram').value.trim(),
+    whatsapp:  document.getElementById('setWhatsapp').value.trim(),
+    kayitAcik: document.getElementById('togKayit').checked,
+    duyuruAcik:document.getElementById('togDuyuru').checked,
+    duyuruTxt: document.getElementById('setDuyuruTxt').value.trim(),
+    updatedAt: Date.now(),
+  };
+  try {
+    await setDoc(doc(db,'ayarlar','site'), data, {merge:true});
+    showToast('Ayarlar kaydedildi ✓');
+  }
+  catch(e) { showToast('Hata: '+e.message, true); }
+};
+
+/* ══ INIT ══ */
+function initAll() {
+  loadCategories();
+  loadSettings();
+}
+</script>
+</body>
+</html>
